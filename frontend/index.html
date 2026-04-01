@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Course Recommender</title>
+</head>
+
+<body>
+
+    <h2>Enter Interests</h2>
+
+    <input id="input" placeholder="python, ml">
+    <button onclick="getRecommendations()">Submit</button>
+
+    <ul id="results"></ul>
+
+    <script>
+        async function getRecommendations() {
+            const input = document.getElementById("input").value;
+
+            const response = await fetch("http://127.0.0.1:5000/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ interests: input.split(",") })
+            });
+
+            const data = await response.json();
+
+            const list = document.getElementById("results");
+            list.innerHTML = "";
+
+            data.forEach(item => {
+                const li = document.createElement("li");
+                li.innerText = item.course_name + " (" + item.similarity.toFixed(2) + ")";
+                list.appendChild(li);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

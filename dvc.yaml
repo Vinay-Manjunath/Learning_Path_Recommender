@@ -1,0 +1,16 @@
+stages:
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+      - src/data/preprocess.py
+      - data/raw/coursera_course_dataset.csv
+    outs:
+      - data/processed/cleaned.csv
+
+  embeddings:
+    cmd: python src/features/build_embeddings.py
+    deps:
+      - src/features/build_embeddings.py
+      - data/processed/cleaned.csv
+    outs:
+      - models/embeddings.npy
