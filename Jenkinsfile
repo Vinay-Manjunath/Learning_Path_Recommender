@@ -5,7 +5,7 @@ pipeline {
 
         stage('Clone') {
             steps {
-                git 'https://github.com/your-repo/ml-recommender.git'
+                git 'https://github.com/Vinay-Manjunath/Learning_Path_Recommender.git'
             }
         }
 
