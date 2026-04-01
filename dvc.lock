@@ -1,0 +1,40 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+    - path: data/raw/coursera_course_dataset.csv
+      hash: md5
+      md5: 581e06f815183340a004c42f2af0b45d
+      size: 216395
+      isexec: true
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: b6dd9b6e2cbfe5d1ff590ae3611dc97c
+      size: 1783
+      isexec: true
+    outs:
+    - path: data/processed/cleaned.csv
+      hash: md5
+      md5: e73fab2daf7a48fc3c28b0e306eb4b77
+      size: 521686
+      isexec: true
+  embeddings:
+    cmd: python src/features/build_embeddings.py
+    deps:
+    - path: data/processed/cleaned.csv
+      hash: md5
+      md5: e73fab2daf7a48fc3c28b0e306eb4b77
+      size: 521686
+      isexec: true
+    - path: src/features/build_embeddings.py
+      hash: md5
+      md5: bd8621ad0accf412bd7efd9c24ed7021
+      size: 601
+      isexec: true
+    outs:
+    - path: models/embeddings.npy
+      hash: md5
+      md5: 8d33e600680ee8cf19f843c276aaf643
+      size: 897152
+      isexec: true
