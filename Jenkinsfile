@@ -29,27 +29,24 @@ pipeline {
             }
         }
 
-        stage('Find DVC Repo Path') {
-            steps {
-                script {
-                    env.DVC_DIR = sh(
-                        script: "find . -name dvc.yaml -exec dirname {} \\; | head -n 1",
-                        returnStdout: true
-                    ).trim()
-                }
-                echo "DVC Directory found at: ${env.DVC_DIR}"
-            }
-        }
+        // stage('Find DVC Repo Path') {
+        //     steps {
+        //         script {
+        //             env.DVC_DIR = sh(
+        //                 script: "find . -name dvc.yaml -exec dirname {} \\; | head -n 1",
+        //                 returnStdout: true
+        //             ).trim()
+        //         }
+        //         echo "DVC Directory found at: ${env.DVC_DIR}"
+        //     }
+        // }
 
         stage('Run DVC Pipeline') {
             steps {
                 sh '''
-                echo "Running inside: $DVC_DIR"
-                cd $DVC_DIR
-
-                . ../$VENV/bin/activate
-
-                dvc pull
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
                 dvc repro
                 '''
             }
