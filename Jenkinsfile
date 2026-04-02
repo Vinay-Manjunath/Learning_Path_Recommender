@@ -14,13 +14,28 @@ pipeline {
             }
         }
 
-        stage('Setup Python') {
+        stage('Setup Python (reuse venv)') {
             steps {
                 sh '''
-                python3 -m venv $VENV
-                . $VENV/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
+                if [ ! -d "$VENV" ]; then
+                    python3 -m venv $VENV
+                    . $VENV/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                else
+                    echo "✅ Using existing venv"
+                fi
+                '''
+            }
+        }
+
+        stage('Debug (VERY IMPORTANT)') {
+            steps {
+                sh '''
+                echo "📁 Current Directory:"
+                pwd
+                echo "📂 Files:"
+                ls -la
                 '''
             }
         }
@@ -34,16 +49,23 @@ pipeline {
             }
         }
 
-        stage('Run Pipeline (DVC + MLflow)') {
+        stage('Run Pipeline (DVC + MLflow Logging)') {
             steps {
                 sh '''
                 . $VENV/bin/activate
 
-                # Run MLflow tracking server in background
-                nohup mlflow ui --host 0.0.0.0 --port $MLFLOW_PORT > mlflow.log 2>&1 &
-
-                # Run pipeline
+                # Run DVC pipeline (this logs to MLflow)
                 dvc repro
+                '''
+            }
+        }
+
+        stage('Run MLflow UI (Optional)') {
+            steps {
+                sh '''
+                . $VENV/bin/activate
+
+                nohup mlflow ui --host 0.0.0.0 --port $MLFLOW_PORT > mlflow.log 2>&1 &
                 '''
             }
         }
@@ -52,6 +74,7 @@ pipeline {
             steps {
                 sh '''
                 . $VENV/bin/activate
+
                 nohup python3 -m src.api.app > api.log 2>&1 &
                 '''
             }
