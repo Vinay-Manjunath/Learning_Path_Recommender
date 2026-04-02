@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 df = pd.read_csv("data/processed/cleaned.csv")
 embeddings = np.load("models/embeddings.npy")
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
 
 def generate_learning_path(user_input, min_similarity=0.4):
 

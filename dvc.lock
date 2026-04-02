@@ -8,11 +8,6 @@ stages:
       md5: 581e06f815183340a004c42f2af0b45d
       size: 216395
       isexec: true
-    - path: src/data/preprocess.py
-      hash: md5
-      md5: b6dd9b6e2cbfe5d1ff590ae3611dc97c
-      size: 1783
-      isexec: true
     outs:
     - path: data/processed/cleaned.csv
       hash: md5
@@ -26,11 +21,6 @@ stages:
       hash: md5
       md5: e73fab2daf7a48fc3c28b0e306eb4b77
       size: 521686
-      isexec: true
-    - path: src/features/build_embeddings.py
-      hash: md5
-      md5: e51c3b0ba250ec6728ca21d1f7dbb82c
-      size: 2612
       isexec: true
     outs:
     - path: models/embeddings.npy
