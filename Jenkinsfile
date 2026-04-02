@@ -1,35 +1,59 @@
 pipeline {
     agent any
 
+    environment {
+        VENV = "venv"
+        MLFLOW_PORT = "5001"
+    }
+
     stages {
 
-        stage('Clone') {
+        stage('Clone Repo') {
             steps {
-                git 'https://github.com/Vinay-Manjunath/Learning_Path_Recommender.git'
+                git 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
             }
         }
 
-        stage('Install') {
+        stage('Setup Python') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh '''
+                python3 -m venv $VENV
+                . $VENV/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
 
-        stage('DVC Pipeline') {
+        stage('Pull DVC Data') {
             steps {
-                sh 'dvc repro'
+                sh '''
+                . $VENV/bin/activate
+                dvc pull
+                '''
             }
         }
 
-        stage('Train + MLflow') {
+        stage('Run Pipeline (DVC + MLflow)') {
             steps {
-                sh 'python src/features/build_embeddings.py'
+                sh '''
+                . $VENV/bin/activate
+
+                # Run MLflow tracking server in background
+                nohup mlflow ui --host 0.0.0.0 --port $MLFLOW_PORT > mlflow.log 2>&1 &
+
+                # Run pipeline
+                dvc repro
+                '''
             }
         }
 
-        stage('Deploy API') {
+        stage('Run API (Optional)') {
             steps {
-                sh 'nohup python src/api/app.py &'
+                sh '''
+                . $VENV/bin/activate
+                nohup python3 -m src.api.app > api.log 2>&1 &
+                '''
             }
         }
     }
