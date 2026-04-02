@@ -29,8 +29,8 @@ stages:
       isexec: true
     - path: src/features/build_embeddings.py
       hash: md5
-      md5: bd8621ad0accf412bd7efd9c24ed7021
-      size: 601
+      md5: e51c3b0ba250ec6728ca21d1f7dbb82c
+      size: 2612
       isexec: true
     outs:
     - path: models/embeddings.npy
