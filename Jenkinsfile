@@ -23,36 +23,31 @@ pipeline {
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 else
-                    echo "Using existing venv"
+                    echo "✅ Using existing venv"
                 fi
                 '''
             }
         }
 
-        // stage('Find DVC Repo Path') {
-        //     steps {
-        //         script {
-        //             env.DVC_DIR = sh(
-        //                 script: "find . -name dvc.yaml -exec dirname {} \\; | head -n 1",
-        //                 returnStdout: true
-        //             ).trim()
-        //         }
-        //         echo "DVC Directory found at: ${env.DVC_DIR}"
-        //     }
-        // }
+        stage('Pull DVC Data') {
+            steps {
+                sh '''
+                . $VENV/bin/activate
+                dvc pull
+                '''
+            }
+        }
 
         stage('Run DVC Pipeline') {
             steps {
                 sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install -r requirements.txt
+                . $VENV/bin/activate
                 dvc repro
                 '''
             }
         }
 
-        stage('Run MLflow UI (Optional)') {
+        stage('Run MLflow UI') {
             steps {
                 sh '''
                 . $VENV/bin/activate
@@ -61,11 +56,10 @@ pipeline {
             }
         }
 
-        stage('Run API (Optional)') {
+        stage('Run API') {
             steps {
                 sh '''
-                cd $DVC_DIR
-                . ../$VENV/bin/activate
+                . $VENV/bin/activate
                 nohup python3 -m src.api.app > api.log 2>&1 &
                 '''
             }
