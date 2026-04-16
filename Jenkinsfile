@@ -51,7 +51,13 @@ pipeline {
                 sh '''
                 . $VENV/bin/activate
 
-                nohup mlflow ui --host 0.0.0.0 --port $MLFLOW_PORT > mlflow.log 2>&1 &
+                echo "Starting MLflow..."
+
+                nohup mlflow ui \
+                --host 0.0.0.0 \
+                --port $MLFLOW_PORT \
+                --backend-store-uri file:./mlruns \
+                > mlflow.log 2>&1 &
 
                 sleep 5
                 echo "===== MLFLOW LOG ====="
