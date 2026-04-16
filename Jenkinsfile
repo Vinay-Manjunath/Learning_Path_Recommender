@@ -60,21 +60,21 @@ pipeline {
             }
         }
 
-        stage('Run API') {
+        stage('Run API DEBUG') {
             steps {
                 sh '''
-                . $VENV/bin/activate
+                set -x   # show every command
 
-                # IMPORTANT: Fix import issue
+                . $VENV/bin/activate
                 export PYTHONPATH=$PWD
+
+                echo "Current directory:"
+                pwd
+                ls -R
 
                 echo "Starting API..."
 
-                nohup python3 -m src.api.app > api.log 2>&1 &
-
-                sleep 5
-                echo "===== API LOG ====="
-                cat api.log || true
+                python3 src/api/app.py
                 '''
             }
         }
