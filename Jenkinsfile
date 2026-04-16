@@ -23,7 +23,7 @@ pipeline {
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 else
-                    echo "✅ Using existing venv"
+                    echo "Using existing venv"
                 fi
                 '''
             }
